@@ -10,7 +10,7 @@ export const Colleges = () => {
 
   // Create Modal Shell State
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [newCollegeData, setNewCollegeData] = useState({ name: '', city: '', state: '', logoUrl: '' });
+  const [newCollegeData, setNewCollegeData] = useState({ name: '', city: '', state: '', logoUrl: '', priorityScore: 0 });
 
   useEffect(() => {
     fetchColleges();
@@ -55,7 +55,7 @@ export const Colleges = () => {
     formData.append('file', file);
     try {
       const { data } = await api.post('/upload', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
-      setNewCollegeData({...newCollegeData, logoUrl: `http://localhost:5000${data.data.url}`});
+      setNewCollegeData({...newCollegeData, logoUrl: data.data.url});
     } catch (err) {
       alert('Local image upload failed');
     }
@@ -130,6 +130,7 @@ export const Colleges = () => {
                 <div className="flex-1"><label className="block text-sm font-medium text-gray-700">City</label><input required type="text" value={newCollegeData.city} onChange={e => setNewCollegeData({...newCollegeData, city: e.target.value})} className="mt-1 w-full rounded-md border text-sm py-2 px-3 border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" /></div>
                 <div className="flex-1"><label className="block text-sm font-medium text-gray-700">State</label><input required type="text" value={newCollegeData.state} onChange={e => setNewCollegeData({...newCollegeData, state: e.target.value})} className="mt-1 w-full rounded-md border text-sm py-2 px-3 border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" /></div>
               </div>
+              <div><label className="block text-sm font-medium text-gray-700">System Priority (Higher = Rank higher)</label><input type="number" value={newCollegeData.priorityScore} onChange={e => setNewCollegeData({...newCollegeData, priorityScore: parseInt(e.target.value) || 0})} className="mt-1 w-full rounded-md border text-sm py-2 px-3 border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="0-100" /></div>
               <div>
                 <label className="block text-sm font-medium text-gray-700">Primary Logo Context</label>
                 <div className="flex gap-3 mt-2 items-center">

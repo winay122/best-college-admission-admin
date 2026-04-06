@@ -21,8 +21,10 @@ export const SidebarLayout = () => {
   ];
 
   const cmsItems = [
-    { name: 'Global Settings', path: '/settings' },
+    { name: 'Hero Banners', path: '/banners' },
+    { name: 'Site Configuration', path: '/settings/global' },
     { name: 'Master Degrees', path: '/settings/degrees' },
+    { name: 'Master Specializations', path: '/settings/specializations' },
     { name: 'Parent Universities', path: '/settings/universities' },
   ];
 
@@ -65,7 +67,7 @@ export const SidebarLayout = () => {
               <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isCMSOpen ? 'rotate-180' : ''}`} />
             </button>
             
-            <div className={`mt-1 ml-4 space-y-1 overflow-hidden transition-all duration-300 ${isCMSOpen ? 'max-h-40 opacity-100' : 'max-h-0 opacity-0'}`}>
+            <div className={`mt-1 ml-4 space-y-1 overflow-hidden transition-all duration-300 ${isCMSOpen ? 'max-h-60 opacity-100' : 'max-h-0 opacity-0'}`}>
               {cmsItems.map((subItem) => (
                 <NavLink
                   key={subItem.name}

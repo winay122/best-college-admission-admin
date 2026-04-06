@@ -1,8 +1,13 @@
 import axios from 'axios';
 
+// Centralized backend configuration
+// In Vite projects, environment variables must be prefixed with VITE_ to be exposed to the client bundle.
+export const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+export const ASSET_URL = import.meta.env.VITE_ASSET_URL || 'http://localhost:5000';
+
 // Create a globally configured Axios instance
 const api = axios.create({
-  baseURL: 'http://localhost:5000/api', // Maps perfectly to our Express router
+  baseURL: BASE_URL, // Maps perfectly to our Express router
   headers: {
     'Content-Type': 'application/json',
   },
