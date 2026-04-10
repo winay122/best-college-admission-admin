@@ -12,6 +12,7 @@ import { Universities } from './pages/Universities';
 import { GlobalSettings } from './pages/GlobalSettings';
 import { Banners } from './pages/Banners';
 import { Specializations } from './pages/Specializations';
+import { Facilities } from './pages/Facilities';
 
 function App() {
   return (
@@ -34,6 +35,7 @@ function App() {
             <Route path="/settings/specializations" element={<Specializations />} />
             <Route path="/settings/universities" element={<Universities />} />
             <Route path="/settings/global" element={<GlobalSettings />} />
+            <Route path="/settings/facilities" element={<Facilities />} />
             <Route path="/banners" element={<Banners />} />
           </Route>
         </Route>

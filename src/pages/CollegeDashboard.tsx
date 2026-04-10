@@ -15,6 +15,9 @@ import {
   Plus,
   Calendar,
   HelpCircle,
+  TrendingUp,
+  Users,
+  Award,
 } from "lucide-react";
 import ReactQuill from "react-quill-new";
 import api, { ASSET_URL } from "../services/api";
@@ -32,6 +35,8 @@ export const CollegeDashboard = () => {
     | "COURSES"
     | "PLACEMENT"
     | "GALLERY"
+    | "RANKINGS"
+    | "SEO"
   >("BASE");
   const [loading, setLoading] = useState(true);
 
@@ -43,6 +48,7 @@ export const CollegeDashboard = () => {
   // Specific Upload Refs
   const brochureRef = useRef<HTMLInputElement>(null);
   const feeStructureRef = useRef<HTMLInputElement>(null);
+  const overallBrochureRef = useRef<HTMLInputElement>(null);
 
   // Stream Editing State
   const [editingCourseId, setEditingCourseId] = useState<string | null>(null);
@@ -60,6 +66,7 @@ export const CollegeDashboard = () => {
   const [degrees, setDegrees] = useState<any[]>([]);
   const [specializations, setSpecializations] = useState<any[]>([]);
   const [universities, setUniversities] = useState<any[]>([]);
+  const [availableFacilities, setAvailableFacilities] = useState<string[]>([]);
 
   // Accreditation Dynamic State
   const [newAcc, setNewAcc] = useState({ label: "", value: "" });
@@ -68,26 +75,22 @@ export const CollegeDashboard = () => {
   const [newDeadline, setNewDeadline] = useState({ event: "", date: "" });
   const [newFAQ, setNewFAQ] = useState({ question: "", answer: "" });
 
-  const STANDARD_FACILITIES = [
-    "Library",
-    "Hostel",
-    "Playground",
-    "WiFi",
-    "Gym",
-    "Cafeteria",
-    "Laboratories",
-    "Auditorium",
-    "Medical Center",
-    "Transport",
-    "Placement Cell",
-    "Smart Classrooms",
-  ];
 
   useEffect(() => {
     fetchCollege();
     fetchDegrees();
     fetchUniversities();
+    fetchGlobalFacilities();
   }, [id]);
+
+  const fetchGlobalFacilities = async () => {
+    try {
+      const { data } = await api.get("/facilities?activeOnly=true");
+      setAvailableFacilities(data.map((f: any) => f.name) || []);
+    } catch (err) {
+      console.error("Global facilities fetch failed");
+    }
+  };
 
   const fetchUniversities = async () => {
     try {
@@ -280,27 +283,39 @@ export const CollegeDashboard = () => {
   };
 
   return (
-    <div className="max-w-7xl space-y-6 animate-in slide-in-from-right-8 duration-300">
-      {/* Header Overlay */}
-      <div className="bg-white rounded-xl shadow-sm ring-1 ring-gray-900/5 p-6 flex flex-col md:flex-row items-center justify-between gap-4">
-        <div className="flex items-center gap-4">
-          <button
-            onClick={() => navigate("/colleges")}
-            className="h-10 w-10 bg-gray-50 border rounded-lg flex items-center justify-center hover:bg-gray-100 transition shadow-sm"
-          >
-            <ArrowLeft className="w-5 h-5 text-gray-600" />
-          </button>
-          <img
-            src={
-              college.logoUrl?.startsWith("http")
-                ? college.logoUrl
-                : `${ASSET_URL}${college.logoUrl}`
-            }
-            alt="Logo"
-            className="h-16 w-16 bg-white p-1 ring-1 ring-gray-200 rounded object-contain"
-          />
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">{college.name}</h1>
+    <div className="max-w-7xl space-y-4 md:space-y-6 animate-in slide-in-from-right-8 duration-300">
+      {/* Responsive Header */}
+      <div className="bg-white rounded-xl shadow-sm ring-1 ring-gray-900/5 p-4 md:p-6">
+        <div className="flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left">
+          <div className="flex items-center gap-4 w-full sm:w-auto">
+            <button
+              onClick={() => navigate("/colleges")}
+              className="h-10 w-10 bg-gray-50 border rounded-lg flex items-center justify-center hover:bg-gray-100 transition shadow-sm shrink-0"
+            >
+              <ArrowLeft className="w-5 h-5 text-gray-600" />
+            </button>
+            <img
+              src={
+                college.logoUrl?.startsWith("http")
+                  ? college.logoUrl
+                  : `${ASSET_URL}${college.logoUrl}`
+              }
+              alt="Logo"
+              className="h-14 w-14 md:h-16 md:w-16 bg-white p-1 ring-1 ring-gray-200 rounded object-contain shrink-0"
+            />
+            <div className="min-w-0 flex-1 sm:hidden">
+              <h1 className="text-xl font-bold text-gray-900 truncate">
+                {college.name}
+              </h1>
+              <p className="text-gray-500 text-xs font-medium">
+                {college.city}, {college.state}
+              </p>
+            </div>
+          </div>
+          <div className="hidden sm:block min-w-0 flex-1">
+            <h1 className="text-2xl font-bold text-gray-900 truncate">
+              {college.name}
+            </h1>
             <p className="text-gray-500 text-sm font-medium">
               {college.city}, {college.state}{" "}
               <span className="mx-2 opacity-50">•</span> System Priority:{" "}
@@ -310,41 +325,47 @@ export const CollegeDashboard = () => {
         </div>
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-8 items-start">
-        {/* Strict Vertical Navigation */}
-        <div className="w-full lg:w-64 flex flex-col gap-2 shrink-0">
+      <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 items-start">
+        {/* Responsive Tab Navigation */}
+        <div className="w-full lg:w-64 flex flex-row lg:flex-col gap-2 shrink-0 overflow-x-auto pb-2 lg:pb-0 scrollbar-hide">
           {[
-            { id: "BASE", label: "Identity Core" },
-            { id: "INFO", label: "Rich Descriptions" },
-            { id: "AFFILIATION", label: "Affiliation & Status" },
-            { id: "DATES", label: "Admission Deadlines" },
-            { id: "FAQ", label: "Helpful FAQs" },
-            { id: "COURSES", label: "Streams & Brochures" },
-            { id: "PLACEMENT", label: "Placement Analytics" },
-            { id: "GALLERY", label: "Media Collection" },
+            { id: "BASE", label: "Identity" },
+            { id: "INFO", label: "Rich Info" },
+            { id: "AFFILIATION", label: "Affiliation" },
+            { id: "DATES", label: "Dates" },
+            { id: "FAQ", label: "FAQs" },
+            { id: "COURSES", label: "Courses" },
+            { id: "PLACEMENT", label: "Placement" },
+            { id: "GALLERY", label: "Gallery" },
+            { id: "RANKINGS", label: "Awards" },
+            { id: "SEO", label: "SEO Config" },
           ].map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
-              className={`flex items-center justify-between px-4 py-3 rounded-lg font-semibold transition-all shadow-sm ring-1 ${activeTab === tab.id ? "bg-blue-600 text-white ring-blue-600 shadow-blue-500/20" : "bg-white text-gray-600 hover:bg-gray-50 ring-gray-200"}`}
+              className={`flex items-center justify-between px-4 py-2.5 lg:py-3 rounded-lg font-semibold transition-all shadow-sm ring-1 whitespace-nowrap lg:whitespace-normal shrink-0 ${
+                activeTab === tab.id
+                  ? "bg-blue-600 text-white ring-blue-600 shadow-blue-500/20"
+                  : "bg-white text-gray-600 hover:bg-gray-50 ring-gray-200"
+              }`}
             >
-              {tab.label}
+              <span className="text-xs lg:text-sm">{tab.label}</span>
               {activeTab === tab.id && (
-                <ChevronRight className="w-4 h-4 opacity-75" />
+                <ChevronRight className="hidden lg:block w-4 h-4 opacity-75" />
               )}
             </button>
           ))}
         </div>
 
-        {/* Dynamic Detail Workspace Render Panel */}
-        <div className="flex-1 bg-white rounded-xl shadow-sm ring-1 ring-gray-900/5 min-h-[500px] w-full max-w-full overflow-x-auto p-6 lg:p-10">
+        {/* Workspace Render Panel */}
+        <div className="flex-1 bg-white rounded-xl shadow-sm ring-1 ring-gray-900/5 min-h-[400px] w-full max-w-full p-4 sm:p-6 lg:p-10">
           {/* TAB 1: BASE */}
           {activeTab === "BASE" && (
             <div className="space-y-6 animate-in fade-in duration-300">
-              <h2 className="text-lg font-bold border-b pb-2 mb-4 text-gray-900">
+              <h2 className="text-base md:text-lg font-bold border-b pb-2 mb-4 text-gray-900">
                 Core Identity Fields
               </h2>
-              <div className="grid grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6">
                 <div>
                   <label className="text-xs font-semibold uppercase text-gray-500 mb-1 block">
                     City
@@ -406,7 +427,7 @@ export const CollegeDashboard = () => {
                   />
                 </div>
 
-                <div className="col-span-2">
+                <div className="sm:col-span-2">
                   <label className="text-xs font-semibold uppercase text-gray-500 mb-1 block">
                     Ownership Type
                   </label>
@@ -477,10 +498,55 @@ export const CollegeDashboard = () => {
                 </div>
                 <div className="col-span-2">
                   <label className="text-xs font-semibold uppercase text-gray-500 mb-3 block">
+                    Overall Institutional Brochure / Prospectus
+                  </label>
+                  <div className="flex gap-4 items-center bg-blue-50/30 p-4 rounded-xl border border-blue-100/50">
+                    <div className="flex-1 flex flex-col gap-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] font-black text-blue-600 uppercase tracking-widest">Current Document</span>
+                        {baseForm.overallBrochureUrl && (
+                          <a 
+                            href={baseForm.overallBrochureUrl.startsWith('http') ? baseForm.overallBrochureUrl : `${ASSET_URL}${baseForm.overallBrochureUrl}`} 
+                            target="_blank" 
+                            rel="noreferrer"
+                            className="text-[10px] flex items-center gap-1 text-blue-700 font-bold hover:underline"
+                          >
+                            <LinkIcon className="w-3 h-3" /> View Existing
+                          </a>
+                        )}
+                      </div>
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          placeholder="Brochure URL..."
+                          value={baseForm.overallBrochureUrl || ""}
+                          onChange={(e) => setBaseForm({ ...baseForm, overallBrochureUrl: e.target.value })}
+                          className="flex-1 border p-2 rounded-lg text-sm bg-white focus:ring-2 focus:ring-blue-500/20"
+                        />
+                        <label className="cursor-pointer bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center text-sm font-bold transition-all shadow-md shadow-blue-500/20">
+                          <Upload className="w-4 h-4 mr-2" /> Upload File
+                          <input
+                            type="file"
+                            accept=".pdf,image/*"
+                            className="hidden"
+                            ref={overallBrochureRef}
+                            onChange={async (e) => {
+                              const url = await uploadFile(e as any);
+                              if (url) setBaseForm({ ...baseForm, overallBrochureUrl: url });
+                            }}
+                          />
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="col-span-2">
+                  <label className="text-xs font-semibold uppercase text-gray-500 mb-3 block">
                     Campus Amenities & Facilities
                   </label>
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3 bg-gray-50 p-4 rounded-xl border border-dashed">
-                    {STANDARD_FACILITIES.map((facility) => (
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3 bg-gray-50 p-4 rounded-xl border border-dashed mb-4">
+                    {Array.from(new Set([...availableFacilities, ...(baseForm.facilities || [])])).map((facility) => (
                       <label
                         key={facility}
                         className="flex items-center gap-3 cursor-pointer group"
@@ -505,6 +571,59 @@ export const CollegeDashboard = () => {
                       </label>
                     ))}
                   </div>
+
+                  {/* Custom Facility Adder */}
+                  <div className="flex gap-2 max-w-sm mt-3">
+                    <input
+                      type="text"
+                      id="custom-facility-input"
+                      placeholder="Add custom facility..."
+                      className="flex-1 border p-1.5 rounded-lg text-xs outline-none focus:ring-1 focus:ring-blue-500"
+                      onKeyDown={async (e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault();
+                          const input = e.currentTarget;
+                          const newVal = input.value.trim();
+                          if (newVal) {
+                            const current = baseForm.facilities || [];
+                            if (!current.includes(newVal)) {
+                              setBaseForm({ ...baseForm, facilities: [...current, newVal] });
+                              if (!availableFacilities.includes(newVal)) {
+                                setAvailableFacilities([...availableFacilities, newVal]);
+                                try {
+                                  await api.post('/facilities', { name: newVal, isActive: true });
+                                } catch (err) {}
+                              }
+                            }
+                            input.value = '';
+                          }
+                        }
+                      }}
+                    />
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        const input = document.getElementById('custom-facility-input') as HTMLInputElement;
+                        const newVal = input.value.trim();
+                        if (newVal) {
+                          const current = baseForm.facilities || [];
+                          if (!current.includes(newVal)) {
+                            setBaseForm({ ...baseForm, facilities: [...current, newVal] });
+                            if (!availableFacilities.includes(newVal)) {
+                              setAvailableFacilities([...availableFacilities, newVal]);
+                              try {
+                                await api.post('/facilities', { name: newVal, isActive: true });
+                              } catch (err) {}
+                            }
+                          }
+                          input.value = '';
+                        }
+                      }}
+                      className="bg-gray-100 text-gray-700 px-3 py-1 rounded-lg text-xs font-bold border hover:bg-gray-200"
+                    >
+                      Add
+                    </button>
+                  </div>
                 </div>
                 <div className="col-span-2">
                   <button
@@ -513,6 +632,89 @@ export const CollegeDashboard = () => {
                   >
                     <Check className="w-4 h-4 inline mr-2" /> Apply Base Changes
                   </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeTab === "SEO" && (
+            <div className="space-y-6 animate-in fade-in duration-300">
+              <div className="flex justify-between items-center border-b pb-4">
+                <div>
+                  <h2 className="text-xl font-bold text-gray-900">Search Engine Optimization</h2>
+                  <p className="text-sm text-gray-500 font-medium">Configure how this college appears in Google search results.</p>
+                </div>
+                <button
+                  onClick={saveBase}
+                  className="bg-blue-600 text-white px-6 py-2 rounded-lg font-bold text-sm shadow hover:bg-blue-700 flex items-center gap-2"
+                >
+                  <Save className="w-4 h-4" /> Save SEO Meta
+                </button>
+              </div>
+
+              <div className="space-y-6">
+                <div className="bg-blue-50 p-6 rounded-2xl border border-blue-100 flex gap-4">
+                   <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shrink-0">
+                      <TrendingUp className="w-5 h-5 text-white" />
+                   </div>
+                   <div>
+                      <h3 className="font-bold text-blue-900">Google Preview (Simulator)</h3>
+                      <div className="mt-4 bg-white p-4 rounded-xl border shadow-sm max-w-2xl">
+                         <div className="text-[#1a0dab] text-xl font-medium hover:underline cursor-pointer mb-1 truncate">
+                           {baseForm.seoTitle || `${baseForm.name} Admission 2025: Fees, Courses, Placement`}
+                         </div>
+                         <div className="text-[#006621] text-sm mb-1 truncate text-ellipsis">
+                           https://collegeselect.in/colleges/{baseForm.slug}
+                         </div>
+                         <div className="text-[#545454] text-sm line-clamp-2">
+                           {baseForm.seoDescription || `Explore ${baseForm.name} in ${baseForm.city}. View detailed information about rankings, fees structure, courses offered, and placement records for 2025.`}
+                         </div>
+                      </div>
+                   </div>
+                </div>
+
+                <div className="grid grid-cols-1 gap-6">
+                  <div>
+                    <label className="text-xs font-black uppercase text-gray-400 mb-2 block tracking-widest">
+                      Meta Title Tag
+                    </label>
+                    <input
+                      type="text"
+                      placeholder={`e.g. ${baseForm.name} Admission 2025 | Courses & Fees`}
+                      value={baseForm.seoTitle || ""}
+                      onChange={(e) => setBaseForm({ ...baseForm, seoTitle: e.target.value })}
+                      className="w-full border-2 border-gray-100 p-3 rounded-xl text-sm focus:border-blue-600 outline-none transition-colors"
+                    />
+                    <p className="mt-2 text-xs text-gray-400 font-medium">Recommended length: 50-60 characters.</p>
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-black uppercase text-gray-400 mb-2 block tracking-widest">
+                      Meta Description
+                    </label>
+                    <textarea
+                      rows={3}
+                      placeholder="Enter a compelling summary of the institution for search results..."
+                      value={baseForm.seoDescription || ""}
+                      onChange={(e) => setBaseForm({ ...baseForm, seoDescription: e.target.value })}
+                      className="w-full border-2 border-gray-100 p-3 rounded-xl text-sm focus:border-blue-600 outline-none transition-colors resize-none"
+                    />
+                    <p className="mt-2 text-xs text-gray-400 font-medium">Recommended length: 150-160 characters.</p>
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-black uppercase text-gray-400 mb-2 block tracking-widest">
+                      Focus Keywords
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. btech admission, top colleges jaipur, rtu affiliated"
+                      value={baseForm.seoKeywords || ""}
+                      onChange={(e) => setBaseForm({ ...baseForm, seoKeywords: e.target.value })}
+                      className="w-full border-2 border-gray-100 p-3 rounded-xl text-sm focus:border-blue-600 outline-none transition-colors"
+                    />
+                    <p className="mt-2 text-xs text-gray-400 font-medium">Separate keywords with commas.</p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -583,6 +785,23 @@ export const CollegeDashboard = () => {
                   />
                 </div>
               </div>
+
+              <div>
+                <label className="text-sm font-semibold text-gray-700 block mb-2">
+                  Key Highlights (Quick Bullets)
+                </label>
+                <div className="bg-white">
+                  <ReactQuill
+                    theme="snow"
+                    modules={quillModules}
+                    value={infoForm.highlightsHtml || ""}
+                    onChange={(val: string) =>
+                      setInfoForm({ ...infoForm, highlightsHtml: val })
+                    }
+                    className="h-48 mb-12"
+                  />
+                </div>
+              </div>
             </div>
           )}
 
@@ -594,7 +813,7 @@ export const CollegeDashboard = () => {
                   <LinkIcon className="w-5 h-5 text-blue-600" /> Parent
                   Affiliation Details
                 </h2>
-                <div className="grid grid-cols-2 gap-6 bg-blue-50/50 p-6 rounded-xl border border-blue-100">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 bg-blue-50/50 p-4 md:p-6 rounded-xl border border-blue-100">
                   <div>
                     <label className="text-xs font-bold uppercase text-blue-700 mb-1 block ml-1">
                       Parent University Node
@@ -658,7 +877,7 @@ export const CollegeDashboard = () => {
                   <ImageIcon className="w-5 h-5 text-purple-600" /> Dynamic
                   Accreditations & Tags
                 </h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
                   {college.accreditations?.map((acc: any) => (
                     <div
                       key={acc.id}
@@ -689,9 +908,9 @@ export const CollegeDashboard = () => {
                   ))}
                 </div>
 
-                <div className="bg-gray-50 p-5 rounded-xl border border-dashed border-gray-300">
+                <div className="bg-gray-50 p-4 md:p-5 rounded-xl border border-dashed border-gray-300">
                   <form
-                    className="flex flex-col sm:flex-row gap-3"
+                    className="flex flex-col lg:flex-row gap-3"
                     onSubmit={async (e) => {
                       e.preventDefault();
                       if (!newAcc.label || !newAcc.value) return;
@@ -775,9 +994,9 @@ export const CollegeDashboard = () => {
                 ))}
               </div>
 
-              <div className="bg-white ring-1 ring-gray-900/5 p-6 rounded-xl shadow-sm">
+              <div className="bg-white ring-1 ring-gray-900/5 p-4 md:p-6 rounded-xl shadow-sm">
                 <form
-                  className="flex flex-col md:flex-row gap-4"
+                  className="flex flex-col lg:flex-row gap-4"
                   onSubmit={async (e) => {
                     e.preventDefault();
                     try {
@@ -1014,7 +1233,7 @@ export const CollegeDashboard = () => {
                   )}
                 </div>
                 <form onSubmit={addOrUpdateCourse} className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="col-span-2 md:col-span-1">
                       <label className="text-xs font-bold uppercase text-gray-500 mb-1 block">
                         Degree
@@ -1150,11 +1369,11 @@ export const CollegeDashboard = () => {
                       />
                     </div>
 
-                    <div className="col-span-2 border-t pt-4 mt-2">
+                    <div className="col-span-1 sm:col-span-2 border-t pt-4 mt-2">
                       <label className="text-xs font-bold text-blue-700 uppercase mb-2 block flex items-center gap-1">
                         <Upload className="w-3 h-3" /> Media (Brochure / Fees)
                       </label>
-                      <div className="flex gap-4">
+                      <div className="flex flex-col sm:flex-row gap-4">
                         <div className="flex-1 bg-white p-3 rounded-lg border relative">
                           <div className="flex justify-between items-center mb-1">
                             <p className="text-[10px] font-bold text-gray-400">
@@ -1239,7 +1458,7 @@ export const CollegeDashboard = () => {
                   <Check className="w-4 h-4" /> Store Variables
                 </button>
               </div>
-              <div className="grid grid-cols-2 gap-6 pb-6 border-b">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 pb-6 border-b">
                 <div className="bg-gray-50 p-4 rounded-xl border">
                   <label className="text-xs font-bold uppercase text-gray-500 mb-1 flex items-center gap-1">
                     <Briefcase className="w-3 h-3" /> Highest Salary Package
@@ -1264,7 +1483,7 @@ export const CollegeDashboard = () => {
                 </div>
                 <div className="bg-gray-50 p-4 rounded-xl border">
                   <label className="text-xs font-bold uppercase text-gray-500 mb-1 flex items-center gap-1">
-                    <Briefcase className="w-3 h-3" /> Average Standard Package
+                    <TrendingUp className="w-3 h-3 text-blue-500" /> Average Salary Package
                   </label>
                   <div className="relative mt-2">
                     <span className="absolute left-3 top-2.5 font-bold text-gray-400">
@@ -1280,11 +1499,96 @@ export const CollegeDashboard = () => {
                         })
                       }
                       className="w-full border-0 py-2.5 pl-8 pr-3 rounded-md shadow-sm ring-1 ring-inset ring-gray-300 font-bold text-gray-900 focus:ring-2 focus:ring-blue-600 sm:text-sm"
-                      placeholder="600000"
+                      placeholder="650000"
+                    />
+                  </div>
+                </div>
+                <div className="bg-gray-50 p-4 rounded-xl border">
+                  <label className="text-xs font-bold uppercase text-gray-500 mb-1 flex items-center gap-1">
+                    <TrendingUp className="w-3 h-3 text-emerald-500" /> Placement Success Rate (%)
+                  </label>
+                  <div className="relative mt-2">
+                    <input
+                      type="number"
+                      max="100"
+                      min="0"
+                      value={placementForm.placementPercent || ""}
+                      onChange={(e) =>
+                        setPlacementForm({
+                          ...placementForm,
+                          placementPercent: e.target.value,
+                        })
+                      }
+                      className="w-full border-0 py-2.5 px-3 rounded-md shadow-sm ring-1 ring-inset ring-gray-300 font-bold text-gray-900 focus:ring-2 focus:ring-blue-600 sm:text-sm"
+                      placeholder="95"
                     />
                   </div>
                 </div>
               </div>
+
+              <div className="bg-gray-50 p-6 rounded-xl border">
+                <h3 className="text-xs font-bold uppercase text-gray-500 mb-4 flex items-center gap-1">
+                  <Users className="w-3 h-3 text-blue-500" /> Hiring Partners (Recruiters)
+                </h3>
+                <div className="flex flex-wrap gap-3 mb-4">
+                  {(college.placement?.recruiters || []).map((r: any) => (
+                    <div key={r.id} className="flex items-center gap-2 bg-white border px-3 py-2 rounded-xl shadow-sm group">
+                      {r.logoUrl && (
+                        <img
+                          src={r.logoUrl.startsWith('http') ? r.logoUrl : `${ASSET_URL}${r.logoUrl}`}
+                          alt={r.name}
+                          className="w-7 h-7 object-contain rounded"
+                          onError={(e) => (e.currentTarget.style.display = 'none')}
+                        />
+                      )}
+                      <div className="flex flex-col">
+                        <span className="text-xs font-bold text-gray-700">{r.name}</span>
+                        {r.website && <span className="text-[10px] text-blue-600 truncate max-w-[120px]">{r.website}</span>}
+                      </div>
+                      <button
+                        type="button"
+                        onClick={async () => {
+                          try {
+                            await api.delete(`/colleges/${id}/recruiters/${r.id}`);
+                            fetchCollege();
+                          } catch { alert('Delete failed'); }
+                        }}
+                        className="text-gray-300 hover:text-red-500 ml-1"
+                      >
+                        <Trash2 className="w-3 h-3" />
+                      </button>
+                    </div>
+                  ))}
+                  {(college.placement?.recruiters || []).length === 0 && (
+                    <div className="text-xs text-gray-400 font-medium italic">No partners added yet.</div>
+                  )}
+                </div>
+
+                {/* Add Recruiter Form */}
+                <form
+                  className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"
+                  onSubmit={async (e: any) => {
+                    e.preventDefault();
+                    const name = e.target.rName.value.trim();
+                    const logoUrl = e.target.rLogo.value.trim();
+                    const website = e.target.rWeb.value.trim();
+                    if (!name) return;
+                    try {
+                      await api.post(`/colleges/${id}/recruiters`, { name, logoUrl, website });
+                      e.target.reset();
+                      fetchCollege();
+                    } catch { alert('Failed to add partner'); }
+                  }}
+                >
+                  <input name="rName" required type="text" placeholder="Company name *" className="border p-2 rounded-lg text-xs" />
+                  <input name="rLogo" type="url" placeholder="Logo image URL (optional)" className="border p-2 rounded-lg text-xs" />
+                  <div className="flex gap-2">
+                    <input name="rWeb" type="url" placeholder="Website URL (optional)" className="flex-1 border p-2 rounded-lg text-xs" />
+                    <button type="submit" className="bg-gray-900 text-white px-4 py-1 rounded-lg text-xs font-bold whitespace-nowrap">Add</button>
+                  </div>
+                </form>
+              </div>
+
             </div>
           )}
 
@@ -1315,7 +1619,7 @@ export const CollegeDashboard = () => {
                         });
                         fetchCollege();
                         e.target.reset();
-                      } catch (err) {}
+                      } catch (err) { }
                     }}
                   >
                     <input
@@ -1369,6 +1673,100 @@ export const CollegeDashboard = () => {
                     </button>
                   </div>
                 ))}
+              </div>
+            </div>
+          )}
+          {/* TAB 6: RANKINGS */}
+          {activeTab === "RANKINGS" && (
+            <div className="space-y-8 animate-in fade-in duration-300">
+              <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2 border-b pb-4">
+                <Award className="w-6 h-6 text-amber-500" /> Institutional Rankings & Recognition
+              </h2>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {college.rankings?.map((r: any) => (
+                  <div
+                    key={r.id}
+                    className="flex items-center justify-between p-4 bg-amber-50/30 border border-amber-100 rounded-xl relative group"
+                  >
+                    <div className="absolute left-0 top-0 bottom-0 w-1 bg-amber-500"></div>
+                    <div>
+                      <div className="text-sm font-bold text-gray-900">
+                        Rank #{r.rank}
+                      </div>
+                      <div className="text-xs font-semibold text-amber-700 mt-1">
+                        {r.agency} ({r.year})
+                      </div>
+                    </div>
+                    <button
+                      onClick={async () => {
+                        if (window.confirm("Delete ranking?")) {
+                          await api.delete(`/colleges/${id}/rankings/${r.id}`);
+                          fetchCollege();
+                        }
+                      }}
+                      className="p-2 text-gray-400 hover:text-red-600"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                ))}
+                {(!college.rankings || college.rankings.length === 0) && (
+                  <div className="col-span-2 text-center py-10 bg-gray-50 rounded-xl border border-dashed text-gray-400 font-medium">
+                    No rankings recorded for this entity.
+                  </div>
+                )}
+              </div>
+
+              <div className="bg-white ring-1 ring-gray-900/5 p-6 rounded-xl shadow-sm">
+                <h3 className="font-bold text-gray-900 mb-4 text-sm">Add New Ranking</h3>
+                <form
+                  className="grid grid-cols-1 md:grid-cols-3 gap-4"
+                  onSubmit={async (e: any) => {
+                    e.preventDefault();
+                    const formData = new FormData(e.target);
+                    const payload = {
+                      agency: formData.get("agency"),
+                      rank: parseInt(formData.get("rank") as string),
+                      year: parseInt(formData.get("year") as string),
+                    };
+                    try {
+                      await api.post(`/colleges/${id}/rankings`, payload);
+                      e.target.reset();
+                      fetchCollege();
+                    } catch (err) {
+                      alert("Ranking Save Fail");
+                    }
+                  }}
+                >
+                  <input
+                    name="agency"
+                    required
+                    placeholder="Agency (NIRF, QS, Times)"
+                    className="border p-2.5 rounded-lg text-sm bg-white"
+                  />
+                  <input
+                    name="rank"
+                    type="number"
+                    required
+                    placeholder="Rank Number"
+                    className="border p-2.5 rounded-lg text-sm bg-white"
+                  />
+                  <input
+                    name="year"
+                    type="number"
+                    defaultValue={new Date().getFullYear()}
+                    required
+                    placeholder="Year"
+                    className="border p-2.5 rounded-lg text-sm bg-white"
+                  />
+                  <button
+                    type="submit"
+                    className="md:col-span-3 bg-amber-600 text-white px-6 py-2.5 rounded-lg font-bold text-sm shadow hover:bg-amber-700 transition-all flex items-center justify-center gap-2"
+                  >
+                    <Plus className="w-4 h-4" /> Add Ranking Entry
+                  </button>
+                </form>
               </div>
             </div>
           )}

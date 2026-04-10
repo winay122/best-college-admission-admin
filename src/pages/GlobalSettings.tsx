@@ -12,7 +12,7 @@ export function GlobalSettings() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  
+
   // States mapping directly to GlobalSetting model
   const [contactEmail, setContactEmail] = useState('');
   const [contactPhone, setContactPhone] = useState('');
@@ -23,6 +23,7 @@ export function GlobalSettings() {
   const [copyrightText, setCopyrightText] = useState('© 2026 CollegeSelect Platforms. All rights reserved.');
   const [emailTemplates, setEmailTemplates] = useState('');
   const [socialLinks, setSocialLinks] = useState<SocialLink[]>([]);
+  const [availableFacilities, setAvailableFacilities] = useState<string[]>([]);
   const [successMsg, setSuccessMsg] = useState('');
 
   useEffect(() => {
@@ -44,6 +45,7 @@ export function GlobalSettings() {
         if (data.data.socialLinks) {
           setSocialLinks(JSON.parse(data.data.socialLinks));
         }
+        setAvailableFacilities(data.data.availableFacilities || []);
       }
     } catch (err) {
       console.error('Failed to load global settings', err);
@@ -86,6 +88,7 @@ export function GlobalSettings() {
         copyrightText,
         emailTemplates,
         socialLinks: JSON.stringify(socialLinks),
+        availableFacilities,
       });
       setSuccessMsg('Settings saved successfully!');
       setTimeout(() => setSuccessMsg(''), 3000);
@@ -141,7 +144,7 @@ export function GlobalSettings() {
       {/* Brand & Legal Module */}
       <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 space-y-5">
         <h2 className="text-lg font-black text-gray-900 border-b border-gray-100 pb-3">Brand Identity & Legal</h2>
-        
+
         <div className="space-y-6">
           <div className="flex flex-col md:flex-row gap-6">
             <div className="flex-1 space-y-4">
@@ -172,7 +175,7 @@ export function GlobalSettings() {
                 </div>
                 <p className="text-[10px] text-gray-400 mt-1 font-medium italic">Enter a direct URL or upload a new logo file.</p>
               </div>
-              
+
               <div>
                 <label className="block text-sm font-bold text-gray-700 mb-1">Copyright Signature</label>
                 <input
@@ -205,8 +208,8 @@ export function GlobalSettings() {
       {/* Contact & Footer Content */}
       <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 space-y-5">
         <h2 className="text-lg font-black text-gray-900 border-b border-gray-100 pb-3">Footer Content & Contact Info</h2>
-        
-        <div className="grid grid-cols-2 gap-4">
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-bold text-gray-700 mb-1">Support Email</label>
             <input
@@ -227,7 +230,7 @@ export function GlobalSettings() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-bold text-gray-700 mb-1">Office Hours</label>
             <input
@@ -273,6 +276,7 @@ export function GlobalSettings() {
         </div>
       </div>
 
+
       {/* Social Media Link Builder */}
       <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
         <div className="flex items-center justify-between border-b border-gray-100 pb-3 mb-4">
@@ -292,38 +296,42 @@ export function GlobalSettings() {
             </div>
           ) : (
             socialLinks.map((link, idx) => (
-              <div key={idx} className="flex items-center gap-3 bg-gray-50 p-3 rounded-xl border border-gray-200">
-                <select
-                  value={link.platform}
-                  onChange={(e) => updateSocialLink(idx, 'platform', e.target.value)}
-                  className="px-3 py-2 border border-gray-300 rounded-lg bg-white font-bold text-sm w-32"
-                >
-                  <option value="facebook">Facebook</option>
-                  <option value="twitter">X (Twitter)</option>
-                  <option value="instagram">Instagram</option>
-                  <option value="linkedin">LinkedIn</option>
-                  <option value="youtube">YouTube</option>
-                </select>
-                <input
-                  type="text"
-                  placeholder="Link Label (e.g., 'Official Facebook')"
-                  value={link.label}
-                  onChange={(e) => updateSocialLink(idx, 'label', e.target.value)}
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg outline-none text-sm"
-                />
-                <input
-                  type="url"
-                  placeholder="https://..."
-                  value={link.url}
-                  onChange={(e) => updateSocialLink(idx, 'url', e.target.value)}
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg outline-none text-sm"
-                />
-                <button
-                  onClick={() => deleteSocialLink(idx)}
-                  className="p-2 text-red-500 hover:bg-red-50 rounded-lg"
-                >
-                  <Trash2 className="w-5 h-5" />
-                </button>
+              <div key={idx} className="flex flex-col sm:flex-row sm:items-center gap-3 bg-gray-50 p-3 md:p-4 rounded-xl border border-gray-200">
+                <div className="flex gap-2 items-center flex-1 w-full">
+                  <select
+                    value={link.platform}
+                    onChange={(e) => updateSocialLink(idx, 'platform', e.target.value)}
+                    className="px-3 py-2 border border-gray-300 rounded-lg bg-white font-bold text-xs md:text-sm w-1/3 sm:w-32"
+                  >
+                    <option value="facebook">Facebook</option>
+                    <option value="twitter">X</option>
+                    <option value="instagram">Insta</option>
+                    <option value="linkedin">L-In</option>
+                    <option value="youtube">YT</option>
+                  </select>
+                  <input
+                    type="text"
+                    placeholder="Label"
+                    value={link.label}
+                    onChange={(e) => updateSocialLink(idx, 'label', e.target.value)}
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg outline-none text-xs md:text-sm"
+                  />
+                </div>
+                <div className="flex gap-2 items-center flex-1 w-full">
+                  <input
+                    type="url"
+                    placeholder="https://..."
+                    value={link.url}
+                    onChange={(e) => updateSocialLink(idx, 'url', e.target.value)}
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg outline-none text-xs md:text-sm"
+                  />
+                  <button
+                    onClick={() => deleteSocialLink(idx)}
+                    className="p-2 text-red-500 hover:bg-red-50 rounded-lg shrink-0"
+                  >
+                    <Trash2 className="w-5 h-5" />
+                  </button>
+                </div>
               </div>
             ))
           )}
