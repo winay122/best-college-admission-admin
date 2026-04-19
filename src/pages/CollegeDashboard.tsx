@@ -343,11 +343,10 @@ export const CollegeDashboard = () => {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
-              className={`flex items-center justify-between px-4 py-2.5 lg:py-3 rounded-lg font-semibold transition-all shadow-sm ring-1 whitespace-nowrap lg:whitespace-normal shrink-0 ${
-                activeTab === tab.id
-                  ? "bg-blue-600 text-white ring-blue-600 shadow-blue-500/20"
-                  : "bg-white text-gray-600 hover:bg-gray-50 ring-gray-200"
-              }`}
+              className={`flex items-center justify-between px-4 py-2.5 lg:py-3 rounded-lg font-semibold transition-all shadow-sm ring-1 whitespace-nowrap lg:whitespace-normal shrink-0 ${activeTab === tab.id
+                ? "bg-blue-600 text-white ring-blue-600 shadow-blue-500/20"
+                : "bg-white text-gray-600 hover:bg-gray-50 ring-gray-200"
+                }`}
             >
               <span className="text-xs lg:text-sm">{tab.label}</span>
               {activeTab === tab.id && (
@@ -505,9 +504,9 @@ export const CollegeDashboard = () => {
                       <div className="flex items-center justify-between">
                         <span className="text-[10px] font-black text-blue-600 uppercase tracking-widest">Current Document</span>
                         {baseForm.overallBrochureUrl && (
-                          <a 
-                            href={baseForm.overallBrochureUrl.startsWith('http') ? baseForm.overallBrochureUrl : `${ASSET_URL}${baseForm.overallBrochureUrl}`} 
-                            target="_blank" 
+                          <a
+                            href={baseForm.overallBrochureUrl.startsWith('http') ? baseForm.overallBrochureUrl : `${ASSET_URL}${baseForm.overallBrochureUrl}`}
+                            target="_blank"
                             rel="noreferrer"
                             className="text-[10px] flex items-center gap-1 text-blue-700 font-bold hover:underline"
                           >
@@ -592,7 +591,7 @@ export const CollegeDashboard = () => {
                                 setAvailableFacilities([...availableFacilities, newVal]);
                                 try {
                                   await api.post('/facilities', { name: newVal, isActive: true });
-                                } catch (err) {}
+                                } catch (err) { }
                               }
                             }
                             input.value = '';
@@ -613,7 +612,7 @@ export const CollegeDashboard = () => {
                               setAvailableFacilities([...availableFacilities, newVal]);
                               try {
                                 await api.post('/facilities', { name: newVal, isActive: true });
-                              } catch (err) {}
+                              } catch (err) { }
                             }
                           }
                           input.value = '';
@@ -654,23 +653,23 @@ export const CollegeDashboard = () => {
 
               <div className="space-y-6">
                 <div className="bg-blue-50 p-6 rounded-2xl border border-blue-100 flex gap-4">
-                   <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shrink-0">
-                      <TrendingUp className="w-5 h-5 text-white" />
-                   </div>
-                   <div>
-                      <h3 className="font-bold text-blue-900">Google Preview (Simulator)</h3>
-                      <div className="mt-4 bg-white p-4 rounded-xl border shadow-sm max-w-2xl">
-                         <div className="text-[#1a0dab] text-xl font-medium hover:underline cursor-pointer mb-1 truncate">
-                           {baseForm.seoTitle || `${baseForm.name} Admission 2025: Fees, Courses, Placement`}
-                         </div>
-                         <div className="text-[#006621] text-sm mb-1 truncate text-ellipsis">
-                           https://collegeselect.in/colleges/{baseForm.slug}
-                         </div>
-                         <div className="text-[#545454] text-sm line-clamp-2">
-                           {baseForm.seoDescription || `Explore ${baseForm.name} in ${baseForm.city}. View detailed information about rankings, fees structure, courses offered, and placement records for 2025.`}
-                         </div>
+                  <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shrink-0">
+                    <TrendingUp className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-blue-900">Google Preview (Simulator)</h3>
+                    <div className="mt-4 bg-white p-4 rounded-xl border shadow-sm max-w-2xl">
+                      <div className="text-[#1a0dab] text-xl font-medium hover:underline cursor-pointer mb-1 truncate">
+                        {baseForm.seoTitle || `${baseForm.name} Admission ${new Date().getFullYear()}: Fees, Courses, Placement`}
                       </div>
-                   </div>
+                      <div className="text-[#006621] text-sm mb-1 truncate text-ellipsis">
+                        https://collegeselect.in/colleges/{baseForm.slug}
+                      </div>
+                      <div className="text-[#545454] text-sm line-clamp-2">
+                        {baseForm.seoDescription || `Explore ${baseForm.name} in ${baseForm.city}. View detailed information about rankings, fees structure, courses offered, and placement records for ${new Date().getFullYear()}.`}
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-1 gap-6">
@@ -680,7 +679,7 @@ export const CollegeDashboard = () => {
                     </label>
                     <input
                       type="text"
-                      placeholder={`e.g. ${baseForm.name} Admission 2025 | Courses & Fees`}
+                      placeholder={`e.g. ${baseForm.name} Admission ${new Date().getFullYear()} | Courses & Fees`}
                       value={baseForm.seoTitle || ""}
                       onChange={(e) => setBaseForm({ ...baseForm, seoTitle: e.target.value })}
                       className="w-full border-2 border-gray-100 p-3 rounded-xl text-sm focus:border-blue-600 outline-none transition-colors"

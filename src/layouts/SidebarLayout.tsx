@@ -16,6 +16,7 @@ import {
   Dumbbell,
   University,
   BookOpen,
+  MessageSquare,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
@@ -40,6 +41,7 @@ export const SidebarLayout = () => {
   const menuItems = [
     { name: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
     { name: 'Inquiries', icon: Users, path: '/inquiries' },
+    { name: 'Support Center', icon: MessageSquare, path: '/support' },
     { name: 'Colleges', icon: Building2, path: '/colleges' },
   ];
 

@@ -13,19 +13,21 @@ import { GlobalSettings } from './pages/GlobalSettings';
 import { Banners } from './pages/Banners';
 import { Specializations } from './pages/Specializations';
 import { Facilities } from './pages/Facilities';
+import SupportCenter from './pages/SupportCenter';
 
 function App() {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
-      
+
       {/* Protected Routes mapped inside SidebarLayout */}
       <Route element={<ProtectedRoute />}>
         <Route element={<SidebarLayout />}>
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
           <Route path="/dashboard" element={<Dashboard />} />
-          
+
           <Route path="/inquiries" element={<Inquiries />} />
+          <Route path="/support" element={<SupportCenter />} />
 
           {/* Admin strictly protected boundaries */}
           <Route element={<AdminRoute />}>
