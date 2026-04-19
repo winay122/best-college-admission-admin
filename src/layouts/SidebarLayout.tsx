@@ -57,11 +57,12 @@ export const SidebarLayout = () => {
   const SidebarContent = () => (
     <div className="flex flex-col h-full">
       {/* Logo */}
-      <div className="h-16 flex items-center px-5 border-b border-gray-200 shrink-0">
-        <h1 className="text-base font-bold tracking-tight text-blue-600 leading-tight">
-          Best College<br />
-          <span className="text-gray-900 text-sm font-semibold">Admin Panel</span>
-        </h1>
+      <div className="h-24 flex items-center px-6 border-b border-gray-100 shrink-0 bg-white">
+        <img 
+          src={`/logo-full.svg?v=10`} 
+          alt="Best College Admission Admin" 
+          className="h-14 w-auto object-contain transition-all"
+        />
       </div>
 
       {/* Nav */}

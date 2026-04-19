@@ -1,0 +1,42 @@
+<svg width="450" height="120" viewBox="0 0 450 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Brand Icon -->
+  <g id="Icon">
+    <!-- Sophisticated Sunlight/Aura -->
+    <defs>
+      <radialGradient id="sun_aura" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(50 60) rotate(90) scale(45)">
+        <stop offset="0%" stop-color="#FFD700" stop-opacity="0.8"/>
+        <stop offset="60%" stop-color="#FFA500" stop-opacity="0.3"/>
+        <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/>
+      </radialGradient>
+    </defs>
+    <circle cx="50" cy="60" r="45" fill="url(#sun_aura)"/>
+    
+    <!-- Stylized Landscape/Trees -->
+    <path d="M20 85C20 75 30 70 40 70C50 70 60 75 60 85H20Z" fill="#2E7D32"/>
+    <path d="M60 85C60 75 75 70 85 70C95 70 105 75 105 85H60Z" fill="#388E3C"/>
+    
+    <!-- High-Detail Open Book -->
+    <path d="M25 90C25 82 35 78 50 78V105C35 105 25 102 25 90Z" fill="#1565C0"/>
+    <path d="M75 90C75 82 65 78 50 78V105C65 105 75 102 75 90Z" fill="#1976D2"/>
+    <path d="M30 88C30 83 40 80 50 80V100C40 100 30 97 30 88Z" fill="#F5F5F5" opacity="0.95"/>
+    <path d="M70 88C70 83 60 80 50 80V100C60 100 70 97 70 88Z" fill="#F5F5F5" opacity="0.95"/>
+    
+    <!-- Professional Graduation Cap -->
+    <path d="M30 55L50 45L70 55L50 65L30 55Z" fill="#334155"/>
+    <path d="M50 65V72" stroke="#334155" stroke-width="2"/>
+    <path d="M65 58V72C65 74 63 75 60 75" stroke="#F59E0B" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="60" cy="77" r="3" fill="#F59E0B"/>
+  </g>
+
+  <!-- Typography: High Contrast Sans-Serif -->
+  <text x="110" y="65" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-weight="800" font-size="34" fill="#0F172A" letter-spacing="-0.5">BestCollege</text>
+  <text x="302" y="65" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-weight="800" font-size="34" fill="#166534" letter-spacing="-0.5">Admission</text>
+  
+  <!-- Divider Decor -->
+  <rect x="110" y="85" width="280" height="2" fill="#E2E8F0" rx="1"/>
+  <circle cx="110" cy="86" r="3" fill="#1E40AF"/>
+  <circle cx="390" cy="86" r="3" fill="#1E40AF"/>
+
+  <!-- Elegant Slogan -->
+  <text x="125" y="105" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-weight="600" font-size="14" fill="#64748B" letter-spacing="2.5">YOUR PATH TO SUCCESS</text>
+</svg>
