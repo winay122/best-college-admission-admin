@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Building2, Edit2, PlusCircle, Trash2, Navigation } from 'lucide-react';
+import { Building2, Edit2, PlusCircle, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 

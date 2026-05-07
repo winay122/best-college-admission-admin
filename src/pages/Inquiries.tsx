@@ -1,6 +1,6 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { 
-  Users, PhoneCall, Mail, GraduationCap, Building2, BookOpen, 
+  Users, PhoneCall, Mail, GraduationCap, Building2, 
   Search, Filter, Download, ChevronLeft, ChevronRight, MoreHorizontal,
   Calendar, Loader2, X
 } from 'lucide-react';

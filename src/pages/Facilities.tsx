@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Plus, Edit2, Trash2, CheckCircle2, XCircle, Library, Code } from 'lucide-react';
+import { Plus, Edit2, Trash2, CheckCircle2, XCircle, Code } from 'lucide-react';
 import api from '../services/api';
 
 export const Facilities = () => {

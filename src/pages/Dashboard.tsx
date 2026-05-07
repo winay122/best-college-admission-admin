@@ -1,4 +1,3 @@
-import React from 'react';
 import { Users, Building2, TrendingUp, PhoneCall } from 'lucide-react';
 
 export const Dashboard = () => {
