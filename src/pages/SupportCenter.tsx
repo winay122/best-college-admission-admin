@@ -1,22 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { io, Socket } from 'socket.io-client';
-import { Send, User, Phone, CheckCircle, Clock, Search, MessageSquare, GraduationCap, Bell, X as CloseIcon } from 'lucide-react';
+import { Send, User, Phone, CheckCircle, Clock, Search, MessageSquare, GraduationCap } from 'lucide-react';
 import { getLeadHistory, getAllLeadsWithChats } from '../services/chat.service';
 import type { ChatMessage, LeadWithChat } from '../services/chat.service';
-import { AnimatePresence, motion } from 'framer-motion';
 import { formatTime, formatDateDivider, groupMessagesByDate } from '../utils/chat-utils';
-
-const getSocketUrl = () => {
-    const rawUrl = import.meta.env.VITE_SOCKET_URL || 'http://localhost:5000';
-    try {
-        const url = new URL(rawUrl);
-        return url.origin;
-    } catch {
-        return 'http://localhost:5000';
-    }
-};
-
-const SOCKET_URL = getSocketUrl();
+import { useChatContext } from '../context/ChatContext';
 
 export default function SupportCenter() {
     const [inbox, setInbox] = useState<LeadWithChat[]>([]);
@@ -24,85 +11,78 @@ export default function SupportCenter() {
     const [messages, setMessages] = useState<ChatMessage[]>([]);
     const [inputValue, setInputValue] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
-    const [toast, setToast] = useState<{ name: string, message: string } | null>(null);
     const [seenMap, setSeenMap] = useState<Record<string, string>>({}); // phone -> lastSeenMsgId
 
-    const socketRef = useRef<Socket | null>(null);
     const scrollRef = useRef<HTMLDivElement>(null);
-    const originalTitle = useRef(document.title);
+    const { socket, clearUnseenCount } = useChatContext();
 
-    // 1. Stable Socket Connection
     useEffect(() => {
-        const socket = io(SOCKET_URL, {
-            transports: ['websocket', 'polling']
-        });
-        socketRef.current = socket;
+        loadInbox();
+    }, []);
 
-        socket.on('connect', () => {
-            console.log('👑 Admin Socket Connected');
-            socket.emit('admin:join');
-        });
+    useEffect(() => {
+        if (!socket) return;
 
-        socket.on('message:new', (msg: ChatMessage) => {
-            // Update messages list if it's the current lead
+        const handleNewMessage = (msg: ChatMessage) => {
             setSelectedLead(current => {
                 if (current && msg.leadPhone === current.phone) {
                     setMessages(prev => {
                         if (prev.find(m => m.id === msg.id)) return prev;
                         return [...prev, msg];
                     });
-                    // Mark as seen if we're looking at it
                     setSeenMap(prev => ({ ...prev, [msg.leadPhone]: msg.id }));
-                } else if (msg.sender === 'LEAD') {
-                    updateTitleNotification();
+                    clearUnseenCount(); // Clear unseen if we are actively viewing this chat
                 }
                 return current;
             });
 
-            // Update inbox preview and RE-SORT
             setInbox(prev => {
                 const updated = prev.map(l =>
                     l.phone === msg.leadPhone ? { ...l, lastMessage: msg } : l
                 );
                 return sortInbox(updated);
             });
-        });
+        };
 
-        socket.on('admin:new-notification', (data: { phone: string; message: ChatMessage }) => {
-            if (data.message.sender === 'LEAD') {
-                setToast({ name: data.phone, message: data.message.content });
-                setTimeout(() => setToast(null), 5000);
-                updateTitleNotification();
-            }
-
+        const handleNewNotification = (data: { phone: string; message: ChatMessage, lead?: any }) => {
             setInbox(prev => {
-                const updated = prev.map(l =>
-                    l.phone === data.phone ? { ...l, lastMessage: data.message } : l
-                );
-                return sortInbox(updated);
+                const existing = prev.find(l => l.phone === data.phone);
+                if (existing) {
+                    const updated = prev.map(l =>
+                        l.phone === data.phone ? { ...l, lastMessage: data.message } : l
+                    );
+                    return sortInbox(updated);
+                } else if (data.lead) {
+                    return sortInbox([{ phone: data.phone, studentName: data.lead.studentName, lastMessage: data.message }, ...prev]);
+                } else {
+                    loadInbox();
+                    return prev;
+                }
             });
-        });
+        };
 
-        loadInbox();
+        socket.on('message:new', handleNewMessage);
+        socket.on('admin:new-notification', handleNewNotification);
 
         return () => {
-            socket.disconnect();
-            document.title = originalTitle.current;
+            socket.off('message:new', handleNewMessage);
+            socket.off('admin:new-notification', handleNewNotification);
         };
-    }, []);
+    }, [socket, clearUnseenCount]);
 
     // 2. Room Joining logic when lead changes
     useEffect(() => {
-        if (selectedLead && socketRef.current) {
+        if (selectedLead && socket) {
             loadHistory(selectedLead.phone);
-            socketRef.current.emit('admin:join', selectedLead.phone);
-            document.title = originalTitle.current; // Clear notification
+            socket.emit('admin:join', selectedLead.phone);
+            clearUnseenCount(); // Clear unread since we just opened a chat
+            
             // Mark last message seen
             if (selectedLead.lastMessage) {
                 setSeenMap(prev => ({ ...prev, [selectedLead.phone]: selectedLead.lastMessage!.id }));
             }
         }
-    }, [selectedLead]);
+    }, [selectedLead, socket, clearUnseenCount]);
 
     useEffect(() => {
         if (scrollRef.current) {
@@ -118,9 +98,7 @@ export default function SupportCenter() {
         });
     };
 
-    const updateTitleNotification = () => {
-        document.title = `🔔 New Message! | Admin Panel`;
-    };
+
 
     const loadInbox = async () => {
         try {
@@ -144,7 +122,7 @@ export default function SupportCenter() {
         e.preventDefault();
         if (!inputValue.trim() || !selectedLead) return;
 
-        socketRef.current?.emit('admin:message', {
+        socket?.emit('admin:message', {
             phone: selectedLead.phone,
             content: inputValue.trim()
         });
@@ -161,28 +139,7 @@ export default function SupportCenter() {
     return (
         <div className="flex h-[calc(100vh-140px)] bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden font-sans relative">
 
-            {/* ─── TOAST NOTIFICATION ──────────────────────────── */}
-            <AnimatePresence>
-                {toast && (
-                    <motion.div
-                        initial={{ opacity: 0, y: -50, x: '-50%' }}
-                        animate={{ opacity: 1, y: 0, x: '-50%' }}
-                        exit={{ opacity: 0, y: -50, x: '-50%' }}
-                        className="absolute top-4 left-1/2 z-[150] bg-blue-600 text-white px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-4 min-w-[300px]"
-                    >
-                        <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
-                            <Bell className="w-5 h-5 animate-bounce" />
-                        </div>
-                        <div className="flex-1">
-                            <h4 className="text-xs font-black uppercase tracking-widest">{toast.name}</h4>
-                            <p className="text-[11px] font-bold opacity-90 truncate max-w-[200px]">{toast.message}</p>
-                        </div>
-                        <button onClick={() => setToast(null)} className="p-1 hover:bg-white/10 rounded-full">
-                            <CloseIcon className="w-4 h-4" />
-                        </button>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+
 
             {/* ─── LEFT PANEL: INBOX ──────────────────────────────── */}
             <div className="w-80 border-r border-gray-100 flex flex-col bg-gray-50/30">

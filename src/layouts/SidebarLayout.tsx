@@ -17,13 +17,16 @@ import {
   University,
   BookOpen,
   MessageSquare,
+  Bell,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { ChatProvider, useChatContext } from '../context/ChatContext';
 
-export const SidebarLayout = () => {
+const SidebarLayoutInner = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const { unseenCount, clearUnseenCount } = useChatContext();
 
   const [isCMSOpen, setIsCMSOpen] = React.useState(true);
   const [sidebarOpen, setSidebarOpen] = React.useState(false);
@@ -179,7 +182,7 @@ export const SidebarLayout = () => {
       {/* ─── MAIN CONTENT ────────────────────────────────── */}
       <main className="flex-1 flex flex-col overflow-hidden min-w-0">
         {/* Top Header */}
-        <header className="h-14 bg-white border-b border-gray-200 flex items-center px-4 md:px-6 shadow-sm gap-3 shrink-0">
+        <header className="h-14 bg-white border-b border-gray-200 flex items-center px-4 md:px-6 shadow-sm gap-4 shrink-0">
           {/* Hamburger (mobile only) */}
           <button
             onClick={() => setSidebarOpen(true)}
@@ -194,9 +197,25 @@ export const SidebarLayout = () => {
 
           <div className="flex-1" />
 
-          {/* User indicator on header (mobile) */}
-          <div className="flex items-center gap-2 md:hidden">
-            <UserCircle className="w-6 h-6 text-gray-400" />
+          {/* Global Notification Bell */}
+          <button 
+            onClick={() => {
+              clearUnseenCount();
+              navigate('/support');
+            }}
+            className="relative p-2 rounded-full text-gray-500 hover:bg-gray-100 transition-colors"
+          >
+            <Bell className="w-5 h-5" />
+            {unseenCount > 0 && (
+              <span className="absolute top-1 right-1.5 w-4 h-4 flex items-center justify-center bg-red-500 text-white text-[9px] font-bold rounded-full animate-pulse border-2 border-white">
+                {unseenCount > 9 ? '9+' : unseenCount}
+              </span>
+            )}
+          </button>
+
+          {/* User indicator on header */}
+          <div className="flex items-center gap-2">
+            <UserCircle className="w-6 h-6 text-gray-400 md:hidden" />
           </div>
           <h2 className="hidden md:block text-sm font-medium text-gray-500">
             Welcome back, {user?.email?.split('@')[0] || 'Admin'}!
@@ -211,3 +230,9 @@ export const SidebarLayout = () => {
     </div>
   );
 };
+
+export const SidebarLayout = () => (
+  <ChatProvider>
+    <SidebarLayoutInner />
+  </ChatProvider>
+);

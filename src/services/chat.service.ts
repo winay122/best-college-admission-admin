@@ -20,11 +20,10 @@ export async function getLeadHistory(phone: string): Promise<ChatMessage[]> {
 }
 
 export async function getAllLeadsWithChats(): Promise<LeadWithChat[]> {
-    // We'll add an endpoint for this in the backend, or fetch from leads
-    const { data } = await api.get('/inquiries'); // Temporary: get from inquiries
-    // In a real app, we'd have a specific /chat/leads endpoint
+    const { data } = await api.get('/chat/inbox'); 
     return data.data.map((i: any) => ({
-        phone: i.leadPhone,
-        studentName: i.lead.studentName
+        phone: i.phone,
+        studentName: i.studentName,
+        lastMessage: i.chatMessages && i.chatMessages.length > 0 ? i.chatMessages[0] : undefined
     }));
 }
