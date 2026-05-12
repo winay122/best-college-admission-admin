@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Building2, Edit2, PlusCircle, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import api from '../services/api';
+import api, { ASSET_URL } from '../services/api';
 
 export const Colleges = () => {
   const [colleges, setColleges] = useState<any[]>([]);
@@ -94,7 +94,7 @@ export const Colleges = () => {
                 <tr key={college.id} className="hover:bg-gray-50/50 transition-colors">
                   <td className="py-3 pl-4 pr-3">
                     <div className="flex items-center gap-3">
-                      <img src={college.logoUrl || 'https://via.placeholder.com/40'} alt="Logo" className="w-9 h-9 object-contain rounded ring-1 ring-gray-200 bg-white p-1 shrink-0" />
+                      <img src={college.logoUrl ? (college.logoUrl.startsWith('http') ? college.logoUrl : `${ASSET_URL}${college.logoUrl}`) : 'https://via.placeholder.com/40'} alt="Logo" className="w-9 h-9 object-contain rounded ring-1 ring-gray-200 bg-white p-1 shrink-0" />
                       <div className="font-semibold text-gray-900 text-sm">{college.name}</div>
                     </div>
                   </td>
@@ -125,7 +125,7 @@ export const Colleges = () => {
       <div className="sm:hidden space-y-3">
         {colleges.map((college) => (
           <div key={college.id} className="bg-white rounded-xl shadow-sm ring-1 ring-gray-900/5 p-4 flex items-center gap-3">
-            <img src={college.logoUrl || 'https://via.placeholder.com/40'} alt="Logo" className="w-12 h-12 object-contain rounded-lg ring-1 ring-gray-200 bg-white p-1 shrink-0" />
+            <img src={college.logoUrl ? (college.logoUrl.startsWith('http') ? college.logoUrl : `${ASSET_URL}${college.logoUrl}`) : 'https://via.placeholder.com/40'} alt="Logo" className="w-12 h-12 object-contain rounded-lg ring-1 ring-gray-200 bg-white p-1 shrink-0" />
             <div className="flex-1 min-w-0">
               <div className="font-semibold text-gray-900 text-sm truncate">{college.name}</div>
               <div className="text-xs text-gray-500 mt-0.5">{college.city}, {college.state}</div>
@@ -162,7 +162,7 @@ export const Colleges = () => {
                 <label className="block text-sm font-medium text-gray-700">Primary Logo Context</label>
                 <div className="flex gap-3 mt-2 items-center">
                   {newCollegeData.logoUrl && (
-                    <img src={newCollegeData.logoUrl} alt="Logo" className="w-10 h-10 object-contain rounded-md bg-white border p-1" onError={(e) => e.currentTarget.style.display = 'none'} onLoad={(e) => e.currentTarget.style.display = 'block'} />
+                    <img src={newCollegeData.logoUrl.startsWith('http') ? newCollegeData.logoUrl : `${ASSET_URL}${newCollegeData.logoUrl}`} alt="Logo" className="w-10 h-10 object-contain rounded-md bg-white border p-1" onError={(e) => e.currentTarget.style.display = 'none'} onLoad={(e) => e.currentTarget.style.display = 'block'} />
                   )}
                   <div className="flex gap-2 flex-1">
                     <input required type="text" placeholder="https://..." value={newCollegeData.logoUrl} onChange={e => setNewCollegeData({...newCollegeData, logoUrl: e.target.value})} className="flex-1 rounded-md border text-sm py-2 px-3 border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" />

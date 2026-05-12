@@ -65,9 +65,8 @@ export function GlobalSettings() {
       const { data } = await api.post('/upload', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
-      // The backend returns a relative URL like /uploads/filename.ext
-      // We prepend the base URL for preview, but save the relative one to the DB
-      setLogoUrl(`${window.location.protocol}//${window.location.hostname}:5000${data.data.url}`);
+      // Save the relative URL to the DB
+      setLogoUrl(data.data.url);
     } catch (err) {
       console.error('Logo upload failed', err);
       alert('Failed to upload logo');
@@ -192,7 +191,7 @@ export function GlobalSettings() {
               <label className="block text-sm font-bold text-gray-700 mb-1 text-center">Logo Preview</label>
               <div className="h-32 w-full bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200 flex items-center justify-center overflow-hidden p-4">
                 {logoUrl ? (
-                  <img src={logoUrl} alt="Master Logo" className="max-h-full max-w-full object-contain" />
+                  <img src={logoUrl.startsWith('http') ? logoUrl : `${import.meta.env.VITE_ASSET_URL || 'http://localhost:5000'}${logoUrl}`} alt="Master Logo" className="max-h-full max-w-full object-contain" />
                 ) : (
                   <div className="flex flex-col items-center text-gray-400">
                     <ImageIcon className="w-8 h-8 opacity-20" />

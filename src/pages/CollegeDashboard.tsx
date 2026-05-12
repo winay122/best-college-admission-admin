@@ -663,7 +663,7 @@ export const CollegeDashboard = () => {
                         {baseForm.seoTitle || `${baseForm.name} Admission ${new Date().getFullYear()}: Fees, Courses, Placement`}
                       </div>
                       <div className="text-[#006621] text-sm mb-1 truncate text-ellipsis">
-                        https://collegeselect.in/colleges/{baseForm.slug}
+                        {import.meta.env.VITE_USER_PORTAL_URL || 'https://bestcollegeadmission.in'}/colleges/{baseForm.slug}
                       </div>
                       <div className="text-[#545454] text-sm line-clamp-2">
                         {baseForm.seoDescription || `Explore ${baseForm.name} in ${baseForm.city}. View detailed information about rankings, fees structure, courses offered, and placement records for ${new Date().getFullYear()}.`}
