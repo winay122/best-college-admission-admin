@@ -365,13 +365,30 @@ export const CollegeDashboard = () => {
                 Core Identity Fields
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6">
+                {/* College Name — span full width, most important field */}
+                <div className="sm:col-span-2">
+                  <label className="text-xs font-semibold uppercase text-gray-500 mb-1 block">
+                    College Name
+                  </label>
+                  <input
+                    type="text"
+                    value={baseForm.name || ""}
+                    onChange={(e) =>
+                      setBaseForm({ ...baseForm, name: e.target.value })
+                    }
+                    className="w-full border p-2 rounded-lg text-sm bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none"
+                    placeholder="e.g. Shrinathji Institute of Technology"
+                  />
+                  <p className="text-[10px] text-gray-400 mt-1 font-medium">Changing the name will also auto-update the URL slug.</p>
+                </div>
+
                 <div>
                   <label className="text-xs font-semibold uppercase text-gray-500 mb-1 block">
                     City
                   </label>
                   <input
                     type="text"
-                    value={baseForm.city}
+                    value={baseForm.city || ""}
                     onChange={(e) =>
                       setBaseForm({ ...baseForm, city: e.target.value })
                     }
@@ -384,7 +401,7 @@ export const CollegeDashboard = () => {
                   </label>
                   <input
                     type="text"
-                    value={baseForm.state}
+                    value={baseForm.state || ""}
                     onChange={(e) =>
                       setBaseForm({ ...baseForm, state: e.target.value })
                     }
@@ -426,7 +443,7 @@ export const CollegeDashboard = () => {
                   />
                 </div>
 
-                <div className="sm:col-span-2">
+                <div>
                   <label className="text-xs font-semibold uppercase text-gray-500 mb-1 block">
                     Ownership Type
                   </label>
@@ -446,6 +463,36 @@ export const CollegeDashboard = () => {
                     <option value="Deemed">Deemed University</option>
                     <option value="Autonomous">Autonomous</option>
                   </select>
+                </div>
+
+                <div>
+                  <label className="text-xs font-semibold uppercase text-gray-500 mb-1 block">
+                    College Type
+                  </label>
+                  <input
+                    type="text"
+                    value={baseForm.collegeType || ""}
+                    onChange={(e) =>
+                      setBaseForm({ ...baseForm, collegeType: e.target.value })
+                    }
+                    placeholder="e.g. Engineering, Medical, Management"
+                    className="w-full border p-2 rounded-lg text-sm bg-gray-50 focus:bg-white"
+                  />
+                </div>
+
+                <div className="sm:col-span-2 flex items-center gap-3 bg-gray-50 p-3 rounded-lg border">
+                  <input
+                    type="checkbox"
+                    id="hostelAvailable"
+                    checked={baseForm.hostelAvailable || false}
+                    onChange={(e) =>
+                      setBaseForm({ ...baseForm, hostelAvailable: e.target.checked })
+                    }
+                    className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  />
+                  <label htmlFor="hostelAvailable" className="text-sm font-semibold text-gray-700 cursor-pointer">
+                    Hostel / Residential Facility Available
+                  </label>
                 </div>
 
                 <div className="col-span-2">
