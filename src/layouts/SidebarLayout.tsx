@@ -18,6 +18,8 @@ import {
   BookOpen,
   MessageSquare,
   Bell,
+  Newspaper,
+  FileText,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { ChatProvider, useChatContext } from '../context/ChatContext';
@@ -50,6 +52,8 @@ const SidebarLayoutInner = () => {
 
   const cmsItems = [
     { name: 'Hero Banners', path: '/banners', icon: ImageIcon },
+    { name: 'News & Updates', path: '/news', icon: Newspaper },
+    { name: 'Legal Pages', path: '/pages', icon: FileText },
     { name: 'Site Configuration', path: '/settings/global', icon: Globe },
     { name: 'Campus Facilities', path: '/settings/facilities', icon: Dumbbell },
     { name: 'Master Degrees', path: '/settings/degrees', icon: GraduationCap },

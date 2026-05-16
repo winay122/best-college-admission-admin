@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { GraduationCap, X, Plus, Edit2, RotateCcw, ArrowUp, ArrowDown, GripVertical } from 'lucide-react';
+import { GraduationCap, X, Plus, Edit2, RotateCcw, ArrowUp, ArrowDown } from 'lucide-react';
 import api from '../services/api';
 
 export const Degrees = () => {

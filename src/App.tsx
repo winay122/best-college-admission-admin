@@ -10,6 +10,8 @@ import { Degrees } from './pages/Degrees';
 import { Universities } from './pages/Universities';
 import { GlobalSettings } from './pages/GlobalSettings';
 import { Banners } from './pages/Banners';
+import { News } from './pages/News';
+import { Pages } from './pages/Pages';
 import { Specializations } from './pages/Specializations';
 import { Facilities } from './pages/Facilities';
 import SupportCenter from './pages/SupportCenter';
@@ -38,6 +40,8 @@ function App() {
             <Route path="/settings/global" element={<GlobalSettings />} />
             <Route path="/settings/facilities" element={<Facilities />} />
             <Route path="/banners" element={<Banners />} />
+            <Route path="/news" element={<News />} />
+            <Route path="/pages" element={<Pages />} />
           </Route>
         </Route>
       </Route>
