@@ -220,7 +220,7 @@ export function Pages() {
                 Updated {new Date(page.updatedAt).toLocaleDateString()}
               </span>
               <a 
-                href={`http://localhost:3000/pages/${page.slug}`} 
+                href={`http://localhost:3000/${page.slug}`} 
                 target="_blank" 
                 rel="noreferrer"
                 className="text-indigo-600 text-[10px] font-black uppercase tracking-widest flex items-center gap-1 hover:underline"

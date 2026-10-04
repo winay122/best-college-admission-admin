@@ -19,7 +19,7 @@ interface Inquiry {
   status: 'PENDING' | 'CALLED' | 'INTERESTED' | 'ADMITTED';
   createdAt: string;
   lead: Lead;
-  college: { id: string, name: string };
+  college: { id: string, name: string } | null;
 }
 
 interface PaginationMeta {
@@ -101,7 +101,7 @@ export const Inquiries = () => {
         `"${inq.lead.email || 'N/A'}"`,
         inq.lead.highSchoolPercent,
         `"${inq.lead.interestedStream}"`,
-        `"${inq.college.name}"`,
+        `"${inq.college?.name || 'General Support (Platform)'}"`,
         `"${inq.status}"`
       ]);
 
@@ -274,7 +274,7 @@ export const Inquiries = () => {
                       <div className="flex items-center gap-2">
                         <Building2 className="w-4 h-4 text-slate-300" />
                         <div>
-                          <p className="text-sm font-bold text-slate-700">{inq.college.name}</p>
+                          <p className="text-sm font-bold text-slate-700">{inq.college?.name || 'General Support (Platform)'}</p>
                           <p className="text-[10px] font-black uppercase text-slate-400 tracking-tighter">{inq.lead.interestedStream}</p>
                         </div>
                       </div>

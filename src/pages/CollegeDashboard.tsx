@@ -480,6 +480,22 @@ export const CollegeDashboard = () => {
                   />
                 </div>
 
+                <div className="sm:col-span-2">
+                  <label className="text-xs font-semibold uppercase text-gray-500 mb-1 block">
+                    Special Offer / Promo Badge (e.g. "20% Off", "Hot Deal", "Upto 30% Off")
+                  </label>
+                  <input
+                    type="text"
+                    value={baseForm.offerText || ""}
+                    onChange={(e) =>
+                      setBaseForm({ ...baseForm, offerText: e.target.value })
+                    }
+                    className="w-full border p-2 rounded-lg text-sm bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none"
+                    placeholder="e.g. 20% Off, Hot Deal, Special Offer (Optional)"
+                  />
+                  <p className="text-[10px] text-gray-400 mt-1 font-medium">This will display a pulsating promotional animated badge at the corner of the college cards and detail pages to attract students.</p>
+                </div>
+
                 <div className="sm:col-span-2 flex items-center gap-3 bg-gray-50 p-3 rounded-lg border">
                   <input
                     type="checkbox"

@@ -38,7 +38,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     useEffect(() => {
         const newSocket = io(SOCKET_URL, {
-            transports: ['websocket', 'polling']
+            transports: ['websocket']
         });
         setSocket(newSocket);
 
